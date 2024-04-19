@@ -832,29 +832,17 @@ export default {
 
 ###### 2.添加button组件及样式
 
-CommonHeader.vue
+（1）在CommonHeader.vue中添加button组件：
 
-```vue
-<template>
-  <div class="header-container">
-    <div class="left-container">
+```html
+<div class="left-container">
       <el-button icon="el-icon-menu" size="mini"></el-button>
     </div>
-    <div class="right-container"></div>
-  </div>
-</template>
+```
 
+（2）编写样式：
 
-<script>
-export default {
-  data() {
-    return {
-
-    }
-  }
-}
-</script>
-
+```css
 <style lang="less" scoped>
 .header-container {
   padding: 20px;
@@ -867,9 +855,43 @@ export default {
 </style>
 ```
 
-------
+这是CSS中的属性，用于布局元素的排列方式。`display: flex;` 表示将该元素设置为弹性布局。`justify-content: space-between;` 表示子元素沿主轴（水平方向）对齐，两边的子元素与容器边界保持间距，剩余空间被平均分配给子元素之间的间隔。`align-items: center;` 表示子元素沿交叉轴（垂直方向）对齐，子元素的高度将与容器的高度保持一致。整体上来说，这段样式代码的意思是创建一个弹性布局容器，其中子元素将在主轴上两边对齐，且子元素的高度与容器的高度相等。
 
+（3）面包屑的实现 ---写上首页
 
+![](C:\Users\uu\Desktop\vue2学习\images\QQ截图20240419195352.png)
+
+编写相应的样式属性：
+
+![](C:\Users\uu\Desktop\vue2学习\images\QQ截图20240419195432.png)
+
+（4）导航栏右侧实现一个头像加下拉的功能：
+
+> [!NOTE]
+>
+> 下拉菜单可以在组件库中找到对应样式粘贴即可，然后新建assets文件夹，里面的images文件夹存放图片。
+
+![](C:\Users\uu\Desktop\vue2学习\images\QQ截图20240419200355.png)
+
+然后将下拉菜单变成头像的样式，即：先变成图片形式，然后改变样式为圆角
+
+![](C:\Users\uu\Desktop\vue2学习\images\QQ截图20240419201228.png)
+
+css样式为：
+
+```css
+ .right-container{
+    .logo {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+  }
+  }
+```
+
+页面效果如图:
+
+![](C:\Users\uu\Desktop\vue2学习\images\QQ截图20240419201512.png)
 
 ## 附录：Git的常用命令
 
@@ -903,7 +925,7 @@ git status
 ###### 5.添加到暂存区
 
 ```css
-git add
+git add .
 ```
 
 ###### 6.提交
@@ -928,9 +950,17 @@ ssh-keygen -t rsa -b 4096
 
 ![](C:\Users\uu\Desktop\vue2学习\images\QQ截图20240419161616.png)
 
-###### 8.push pull
+###### 8. add push pull
 
-```
+```css
+git add . 
+git commit -m "注释"
 git push
 ```
+
+> [!IMPORTANT]
+>
+> [解决Please make sure you have the correct access rights and the repository exists 问题.]: https://blog.csdn.net/qq_43705131/article/details/107965888
+>
+> 
 

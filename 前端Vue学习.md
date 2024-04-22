@@ -1832,7 +1832,7 @@ Mock.mock('/api/home/getData',homeApi.getStatisticalData)
 
 ## 15.首页可视化图表样式调整
 
-（1）首先把上述图表写死的数据用mock生成的tableData数据代替：
+##### （1）首先把上述图表写死的数据用mock生成的tableData数据代替：
 
 ![](C:\Users\uu\Desktop\vue2学习\images\QQ截图20240421140656.png)
 
@@ -1851,11 +1851,11 @@ mounted() {
 
 
 
-(2)运行效果：
+##### (2)运行效果：
 
 ![](C:\Users\uu\Desktop\vue2学习\images\QQ截图20240421141110.png)
 
-（2）实现右侧图表的布局：
+##### （3）实现右侧图表的布局：
 
 Home.vue
 
@@ -1896,9 +1896,316 @@ Home.vue
 通过这段样式代码，可以实现两个el-card元素水平并排，宽度平分容器，并与上方的元素有一定的间距。
 ```
 
-（3）最后页面布局：
+##### （4）最后页面布局：
 
 ![](C:\Users\uu\Desktop\vue2学习\images\QQ截图20240421170507.png)
+
+
+
+------
+
+
+
+## 16.echarts表格的基本使用
+
+##### 1.安装echarts
+
+```js
+npm i echarts@5.1.2
+```
+
+![](C:\Users\uu\Desktop\vue2学习\images\QQ截图20240421192745.png)
+
+##### 2.引入echarts
+
+在对应的页面中引入echarts,比如说我的图表是在主页中显示，所以在Home.vue中引入：
+
+```js
+import * as  echarts from 'echarts'
+```
+
+##### 3.编写代码（echarts表格的折线图）
+
+echarts代码的书写位置应该写在mounted的生命周期中。（参考官网文档）
+
+Home.vue
+
+````js
+<!-- 折线图 -->
+<div ref="echarts1" style="height:280px"></div>
+````
+
+对应的js代码：
+
+```js
+// 基于准备好的dom,初始化echarts实例
+      const line_echarts = echarts.init(this.$refs.echarts1)
+      // 指定图表的配置项和数据
+      var line_echartsoption = {}
+      // 处理数据xAxis
+      const { orderData } = data.data
+      const xAxis = Object.keys(orderData.data[0])
+
+      const xAxisData = {
+        data: xAxis
+      }
+      line_echartsoption.xAxis = xAxisData
+      line_echartsoption.yAxis = {}
+      line_echartsoption.legend = xAxisData
+
+      line_echartsoption.series = []
+
+      xAxis.forEach(key => {
+        line_echartsoption.series.push({
+          name: key,
+          data: orderData.data.map(item => item[key]),
+          type: 'line'
+        })
+      })
+      //使用刚指定的配置和数据显示图表
+      line_echarts.setOption(line_echartsoption)
+
+    这段代码是一个基于Vue.js框架中使用echarts图表库的示例代码。它展示了如何使用预先准备好的DOM元素初始化echarts实例，并为图表定义配置项和数据。
+
+首先，通过`echarts.init(this.$refs.echarts1)`代码初始化了一个echarts实例，这个实例将会在名为`echarts1`的DOM元素上显示出来。
+
+接着定义了一个空的`line_echartsoption`对象，用来存储图表的配置项和数据。然后从接收到的数据中提取出了`orderData`，并将`orderData.data[0]`中的键作为`xAxis`（x轴）的数据。将x轴的数据放入`xAxisData`对象中，然后将其赋值给`line_echartsoption.xAxis`。y轴的定义则直接给`line_echartsoption.yAxis`赋一个空对象。同时，也将x轴的数据定义给`legend`属性，作为图例。
+
+接下来，在`line_echartsoption.series`数组中添加了一些对象。对于这些对象，使用了`xAxis.forEach`循环遍历x轴的每一个数据，并将其加入到`line_echartsoption.series`数组。其中，`name`表示该数据系列的名称，`data`表示该数据系列的具体数据，`type`为'line'表示这是一个线性图表。
+
+最后，使用`line_echarts.setOption(line_echartsoption)`将刚才定义的配置和数据应用到图表中进行显示。
+
+```
+
+##### 4.echarts表格的柱状图
+
+①在第二个表格内引入echarts图表
+
+```vue
+<div class="graph">
+      <el-card style="height: 260px">
+        <div ref="echarts2" style="height: 260px;"></div>
+      </el-card>
+```
+
+②同样是先基于准备好的dom,初始化echarts实例
+
+```js
+//柱状图
+const histo_echarts = echarts.init(this.$refs.echarts2)
+
+const histo_echartsOption = {
+          legend: {
+            // 图例文字颜色
+            textStyle: {
+              color: "#333",
+            },
+          },
+          grid: {
+            left: "20%",
+          },
+          // 提示框
+          tooltip: {
+            trigger: "axis",
+          },
+          xAxis: {
+            type: "category", // 类目轴
+            data: userData.map(item => item.data),//获取userData的数据
+            axisLine: {
+              lineStyle: {
+                color: "#17b3a3",
+              },
+            },
+            axisLabel: {
+              interval: 0,
+              color: "#333",
+            },
+          },
+          yAxis: [
+            {
+              type: "value",
+              axisLine: {
+                lineStyle: {
+                  color: "#17b3a3",
+                },
+              },
+            },
+          ],
+          color: ["#2ec7c9", "#b6a2de"],
+          series: [
+              {
+                  name:'新增用户',
+                  data: userData.map(item => item.new),
+                  type:'bar'
+              },
+              {
+                  name:'活跃用户',
+                  data: userData.map(item => item.active),
+                  type:'bar'
+              }
+          ],
+        },
+      
+      这段代码是使用ECharts库绘制柱状图的示例。具体解释如下：
+
+1. `histo_echarts` 是一个ECharts实例，使用 `echarts.init` 函数初始化并传入一个DOM元素（通过 `this.$refs.echarts2` 获取）。
+2. `histo_echartsOption` 是一个ECharts的配置对象，用来描述图表的属性和数据。
+3. `legend` 是图例配置，用来展示数据系列的标识和样式。
+4. `grid` 是网格配置，用于调整图表在画布上的位置和大小。
+5. `tooltip` 是提示框配置，用于展示用户在图表上的交互操作时的提示信息。
+6. `xAxis` 是X轴配置，指定类型为 "category" 表示为类目轴，即横坐标上的数据类型为离散的类目数据。`data` 属性是一个数组，用于设置X轴上的刻度标签，这里的数据来源于 `userData` 数组中的 `data` 属性。
+7. `yAxis` 是Y轴配置，指定类型为 "value" 表示为数值轴，即纵坐标上的数据类型为数值。`axisLine` 属性用来设置轴线的样式。
+8. `color` 是系列的颜色配置，用于指定不同系列的颜色。
+9. `series` 是系列配置，用于描述每个系列的数据和类型。这里定义了两个柱状图系列，分别是 "新增用户" 和 "活跃用户"，数据来源于 `userData` 数组中的 `new` 和 `active` 属性。
+
+最后，通过调用 `histo_echarts.setOption(histo_echartsOption)` 将配置应用到ECharts实例中，从而生成和渲染柱状图。
+```
+
+③调用实例对象的Option
+
+````js
+//柱状图
+const histo_echarts = echarts.init(this.$refs.echarts2)
+const histo_echartsOption = {
+    ...
+}
+    histo_echarts.setOption(histo_echartsOption)
+````
+
+##### 5.echarts表格的饼状图
+
+①在第三个表格内引入echarts
+
+```vue
+<el-card style="height: 260px">
+        <!-- 饼状图 -->
+        <div ref="echarts3" style="height: 260px;"></div>
+      </el-card>
+```
+
+②同样是先基于准备好的dom,初始化echarts实例
+
+```js
+// 饼状图
+      const circle_echarts = echarts.init(this.$refs.echarts3)
+      const circle_echartsOption = {
+        tooltip: {
+          trigger: "item",
+        },
+        color: [
+          "#0f78f4",
+          "#dd536b",
+          "#9462e5",
+          "#a6a6a6",
+          "#e1bb22",
+          "#39c362",
+          "#3ed1cf",
+        ],
+        series: [
+          {
+            data: videoData,
+            type: 'pie'
+
+          }
+        ],
+      }
+```
+
+③调用实例对象的Option
+
+```js
+// 处理数据xAxis
+      const { orderData, userData, videoData } = data.data
+      
+      
+circle_echarts.setOption(circle_echartsOption)
+```
+
+##### 6.运行效果：
+
+![](C:\Users\uu\Desktop\vue2学习\images\QQ截图20240422125409.png)
+
+## 17.面包屑&tag介绍
+
+##### 1.了解面包屑
+
+> [!NOTE]
+>
+> 在网站应用中，面包屑导航的作用就是帮助访问者确定自己处在网站中的什么位置以及如何返回到原来的位置。对于用户而言，这个导航辅助工具可以更轻松地在网站上查找内容，帮助用户定位在你网站上的位置，并在需要时帮助用户回到之前页面。对于搜索引擎来讲，面包屑导航会让用户了解你的网站结构，方便爬取索引。
+
+![](C:\Users\uu\Desktop\vue2学习\images\QQ截图20240422125943.png)
+
+##### 2.element-ui引入面包屑组件
+
+```vue
+<el-breadcrumb separator="/">
+  <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+  <el-breadcrumb-item><a href="/">活动管理</a></el-breadcrumb-item>
+  <el-breadcrumb-item>活动列表</el-breadcrumb-item>
+  <el-breadcrumb-item>活动详情</el-breadcrumb-item>
+</el-breadcrumb>
+```
+
+##### 3.在CommonHeader.vue文件中书写对应代码：
+
+CommonHeader.vue
+
+```vue
+ <!-- 面包屑 -->
+    <el-breadcrumb separator="/">
+      <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+      <el-breadcrumb-item><a href="/">活动管理</a></el-breadcrumb-item>
+      <el-breadcrumb-item>活动列表</el-breadcrumb-item>
+      <el-breadcrumb-item>活动详情</el-breadcrumb-item>
+    </el-breadcrumb>
+```
+
+对应界面如下：
+
+![](C:\Users\uu\Desktop\vue2学习\images\QQ截图20240422130622.png)
+
+##### 4.使用vuex来进行统一的数据存储
+
+src/store/tab.js
+
+```js
+state:{
+    isCollapse:false,  //控制菜单的展开还是收起
+    tabsList:[
+      // 面包屑数据
+      {
+        path:"/",
+        name:"home",
+        label:"首页",
+        icon:"s-home",
+        url:"Home/Home",
+      }
+    ]
+  },
+```
+
+逻辑处理:就是当点击左侧导航栏时，面包屑的路由也要随之发生变化，也就是components/CommonAside.vue中写入点击事件的处理逻辑，要修改state的数据，首先想到应该在mutation里面去修改，也就是说，当点击菜单的时候，应该是去调用store里面的mutation方法：
+
+①点击事件：
+
+```js
+// 点击菜单
+    clickmenu(item) {
+      // 当页面的路由与跳转的路由不一致才允许跳转
+      if (this.$route.path !== item.path && !(this.$route.path === '/home' && (item.path === '/'))) {
+        this.$router.push(item.path)
+      }
+      this.$store.commit('selectMenu',item)
+    }
+  },
+```
+
+②更新面包屑数据,有一个逻辑处理：
+
+```js
+```
+
+
 
 
 
@@ -1972,4 +2279,31 @@ git push
 > [解决Please make sure you have the correct access rights and the repository exists 问题.]: https://blog.csdn.net/qq_43705131/article/details/107965888
 >
 > 
+
+###### 9.常用团队之间上传代码（本地上传到远程仓库）
+
+> [!CAUTION]
+>
+> ①安装完成git后在要上传的文件内部左键Git Bash here
+>
+> ②将下面配置的命令输入，表示仓库保存位置
+>
+> git config --global user.name "susu"
+>     git config --global user.email 1983748570@qq.com
+>
+> ③创建git    :  git init
+>
+> ④查看git状态  ：  git status
+>
+> ⑤提交文件添加到缓存区   :  git add . 
+>
+> ⑥提交：   git  commit    -m  "描述信息"
+>
+> ⑦建立与远程仓库关联：  git remote add origin https://github.com/1983748570zhang/vue3_susu.git
+>
+> ⑧将本地main分支的更改推送到远程origin仓库：git push -u origin "master"
+>
+> 
+
+
 
